@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 12f776635c3b930aaab9da576cbc8b2ac70867be65d88bba143dbba5e1dbf3d1
+-- hash: 9b194ebcc2dd9bcbf47df1f12832dbd1d039f575b15d6c72de7e495364f19065
 
 name:           flpproj
 version:        0.1.0.0
@@ -27,8 +27,11 @@ source-repository head
 
 library
   exposed-modules:
-      DFSMProcessing
+      EquivClassesSetup
       InputParser
+      MinDfsmConstructor
+      MinPrep
+      OutputGen
       Types
   other-modules:
       Paths_flpproj

@@ -10,9 +10,9 @@ module Types
 -- F....mnozina koncovych stavu
 data Trans = Trans {
     from::State,
-    via::Symbol,
+    thru::Symbol,
     to::State
-} deriving Show
+} deriving (Show, Eq)
 
 type State = String
 type Symbol = String

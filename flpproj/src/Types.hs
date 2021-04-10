@@ -12,7 +12,7 @@ data Trans = Trans {
     from::State,
     thru::Symbol,
     to::State
-} deriving (Show, Eq)
+} deriving (Show, Eq, Ord)
 
 type State = String
 type Symbol = String

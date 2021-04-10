@@ -1,20 +1,35 @@
 import Types
 import EquivClassesSetup
-import OutputGen ( printEquivClasses )
+import OutputGen ( printEquivClasses, printDFSM )
 import InputParser ( loadDFSM )
-import MinPrep (verifyTotalTransition, removeNonReachableStates)
+import MinPrep (ensureTotalTransition, removeNonReachableStates)
+import MinDfsmConstructor (createDfsmFromEqClasses)
 
 import Data.List
 
 main :: IO ()
 main = do
-    srcData <- readFile "test/test0.in"
-    let dfsm = verifyTotalTransition $ removeNonReachableStates $ loadDFSM srcData
-    test_IndistinguishabilityRelation dfsm
+    srcData <- readFile "test/test4.in"
+    --f <- readFile srcData
+    let dfsm = ensureTotalTransition $ removeNonReachableStates $ loadDFSM srcData
+    putStrLn ""
+    --printDFSM dfsm
+    --test_inputFormat $ lines f
+    --test_IndistinguishabilityRelation dfsm
+    test_createDfsmFromEqClasses dfsm (indistinguishabilityRelation dfsm)
+
+test_inputFormat :: [String] -> IO ()
+test_inputFormat (x:xs) = do
+    putStrLn x
+    test_inputFormat xs
+
+test_createDfsmFromEqClasses :: DFSM  -> [[State]] -> IO ()
+test_createDfsmFromEqClasses dfsm classes = do
+    --printEquivClasses classes
+    printDFSM $ createDfsmFromEqClasses dfsm classes
 
 test_IndistinguishabilityRelation :: DFSM -> IO ()
 test_IndistinguishabilityRelation dfsm = do
-    putStrLn ""
     printEquivClasses $ indistinguishabilityRelation dfsm
 
 test_transTarget :: DFSM -> IO ()

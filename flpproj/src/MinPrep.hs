@@ -1,7 +1,7 @@
 -- Module representing the Algorithm 3.4 from the TIN course material for the removal of the nonreachable states
 
 module MinPrep (
-    removeNonReachableStates, verifyTotalTransition
+    removeNonReachableStates, ensureTotalTransition
 ) where
 
 import Types
@@ -12,11 +12,17 @@ import Data.Maybe
 -- FUNCTIONS FOR REMOVAL OF NONREACHABLE STATES
 
 removeNonReachableStates :: DFSM -> DFSM
-removeNonReachableStates (DFSM q sigma d q0 f) = DFSM {q=q_lean, sigma=sigma, d=d_lean, q0=q0, f=f}
+removeNonReachableStates (DFSM q sigma d q0 f) = DFSM {q=q_lean, sigma=sigma, d=d_lean, q0=q0, f=f_lean}
     where
         q_lean = reachableStates q d sigma [q0]
         d_lean = removeIrrelevantTrans d q_lean
+        f_lean = removeNonReachableFinal f q_lean
 
+removeNonReachableFinal :: [State] -> [State] -> [State]
+removeNonReachableFinal [] _ = []
+removeNonReachableFinal (qf:qfs) qs
+    | qf `elem` qs = qf : removeNonReachableFinal qfs qs
+    | otherwise = removeNonReachableFinal qfs qs
 
 -- Creates a set of all reachable states based on the set of all available states, set of transitions and input alphabet
 reachableStates::[State] -> [Trans] -> [Symbol] -> [State] -> [State]
@@ -58,11 +64,17 @@ stateExists Trans{from=from} q = from `elem` q
 
 -- ---------------------------------------------------------------
 -- Functions ensuring the DFSM is passed further as a DFSM with total transition function
-verifyTotalTransition :: DFSM -> DFSM
-verifyTotalTransition (DFSM q sigma d q0 f) = DFSM q_total sigma d_total q0 f
+ensureTotalTransition :: DFSM -> DFSM
+ensureTotalTransition (DFSM q sigma d q0 f) 
+    | isSinkPresent dTotal = DFSM (q ++ ["SINK"]) sigma (addSinkTransitions dTotal sigma) q0 f
+    | otherwise = DFSM q sigma dTotal q0 f
     where
-        d_total = ensureTotalTrans q sigma d
-        q_total = addSinkState q $ isSinkPresent d_total
+        dTotal = ensureTotalTrans q sigma d
+
+addSinkTransitions :: [Trans] -> [Symbol] -> [Trans]
+addSinkTransitions d sigma = d ++ map addSinkToSink sigma
+    where
+        addSinkToSink s = Trans "SINK" s "SINK"
 
 ensureTotalTrans :: [State] -> [Symbol] -> [Trans] -> [Trans]
 ensureTotalTrans [] _ _ = []
@@ -81,15 +93,10 @@ transFromThruExists q s (Trans from thru to:ds)
     | q == from && s == thru = Just [Trans from thru to]
     | otherwise = transFromThruExists q s ds
 
-addSinkState :: [State] -> Bool -> [State]
-addSinkState q add_bool
-    | not add_bool = q
-    | otherwise = q ++ ["SINK"]
-
 isSinkPresent :: [Trans] -> Bool
 isSinkPresent = any isSink
-
-isSink :: Trans -> Bool
-isSink Trans{to=to}
-    | to == "SINK" = True
-    | otherwise = False
+    where
+        isSink :: Trans -> Bool
+        isSink Trans{to=to}
+            | to == "SINK" = True
+            | otherwise = False

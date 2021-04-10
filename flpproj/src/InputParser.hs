@@ -3,6 +3,9 @@ module InputParser
     ) where
 import Types ( DFSM(..), State, Symbol, Trans (..))
 
+import Data.List
+import Data.Char
+
 data LaunchMode = Print | Minimize deriving (Enum, Show, Eq)
 type FPath = String
 
@@ -19,25 +22,62 @@ parseArgs [mode,path]
 parseArgs (_:_:_:zs) = error "Too many launch arguments were provided!"
 
 loadDFSM :: String -> DFSM
-loadDFSM inp = extractDFSM $ lines inp
+loadDFSM inp = extractDFSM $ map (filter (/= '\r')) $ lines inp
 
 extractDFSM :: [String] -> DFSM
-extractDFSM (q:s:[q0]:f:d) = DFSM {q=splitPerComma q, sigma=splitInAlph s, d=getInTrans d, q0=[q0], f=splitPerComma f}
+extractDFSM (q_in:s:[q0]:f:d) = DFSM {
+    q = q_parsed,
+    sigma = s_parsed,
+    d = checkForDuplTrans $ map (initInTrans "Transition" q_parsed s_parsed . splitPerComma) d,
+    q0 = checkStateMembership "Starting state" q_parsed [q0],
+    f = map (checkStateMembership "Final states" q_parsed ) $ sort $ splitPerComma f
+    }
     where
-        getInTrans :: [String] -> [Trans]
-        getInTrans [] = []
-        getInTrans (t:ts) = initInTrans (splitPerComma t) : getInTrans ts
+        q_parsed = map checkInputStatesFormat $ splitPerComma q_in
+        s_parsed = splitInAlph s
 
-        splitInAlph :: String -> [Symbol]
-        splitInAlph [] = []
-        splitInAlph (x:xs) = [x] : splitInAlph xs
+extractDFSM _ = error "Input file is in an unexpected format!"
 
-        splitPerComma :: String -> [String]
-        splitPerComma [] = []
-        splitPerComma str = x : splitPerComma (drop 1 y) where (x,y) = span (/= ',') str
-        --splitPerComma (x:xs)
-        --    | x /= ',' = [x] : splitPerComma xs
-        --    | otherwise = splitPerComma xs
+checkInputStatesFormat :: State -> State
+checkInputStatesFormat [q]
+    | isNumber q = [q]
+checkInputStatesFormat (q:qs)
+    | isNumber q = q : checkInputStatesFormat qs
+    | otherwise = error ("States input error: unallowed character '" ++ [q] ++ "' in states definition!")
 
-        initInTrans :: [String] -> Trans
-        initInTrans [q0, thru, q1] = Trans {from=q0, thru=thru, to=q1}
+checkForDuplTrans :: [Trans] -> [Trans]
+checkForDuplTrans d
+    | length (nub d) == length d = d
+    | otherwise = error "Duplicate input transitions detected, terminating!"
+
+
+checkStateMembership :: String -> [State] -> State -> State
+checkStateMembership err_msg qs q
+    | q `elem` qs = q
+    | otherwise = error (err_msg ++ " input error: '" ++ q ++ "' is not a state from the set " ++ intercalate "-" qs ++ "!")
+
+checkSymbolMembership :: String -> [Symbol] -> State -> State
+checkSymbolMembership err_msg ss s
+    | s `elem` ss = s
+    | otherwise = error (err_msg ++ " input error: '" ++ s ++ "' is not a symbol from the alphabet " ++ intercalate "-" ss ++ "!")
+
+splitInAlph :: String -> [Symbol]
+splitInAlph [] = []
+splitInAlph (s:ss) = checkAlphSymbol s : splitInAlph ss
+    where
+        checkAlphSymbol :: Char -> Symbol
+        checkAlphSymbol s
+            | isLower s = [s]
+            | otherwise = error ("Alphabet input error: '" ++ [s] ++ "' is not a lowercase letter!")
+
+
+splitPerComma :: String -> [String]
+splitPerComma [] = []
+splitPerComma str = x : splitPerComma (drop 1 y) where (x,y) = span (/= ',') str
+
+initInTrans :: String -> [State] -> [Symbol] -> [String] -> Trans
+initInTrans err_msg q s [q_from, thru, q_to] = Trans {
+                    from=checkStateMembership err_msg q q_from,
+                    thru=checkSymbolMembership err_msg s thru,
+                    to=checkStateMembership err_msg q q_to}
+initInTrans _ _ _ err_trans = error ("Unexpected format of the input transition: " ++ unwords err_trans)

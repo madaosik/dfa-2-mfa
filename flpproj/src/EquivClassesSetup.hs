@@ -3,7 +3,7 @@
 
 module EquivClassesSetup (
     indistinguishabilityRelation,
-    transTarget, isInSameEqClass
+    transTarget, isInSameEqClass, targetClass
 ) where
 
 import Types
@@ -21,7 +21,7 @@ createEquivClasses classes sigma d
 
 -- Facilitates the equivalence analysis for each of the equivalence class
 higherDegreeRelation :: [[State]] -> [Symbol] -> [Trans] -> [[State]]
-higherDegreeRelation clss sigma d = okClasses ++ [disrClasses]
+higherDegreeRelation clss sigma d = if null disrClasses then sort okClasses else sort (okClasses ++ [disrClasses])
     where
         inspectedClasses = [inspectClass eqClass clss sigma d | eqClass <- clss, length eqClass > 1]
         okClasses = [singletonClass | singletonClass <- clss, length singletonClass == 1] ++ map fst inspectedClasses
@@ -47,7 +47,7 @@ isInSameEqClass p q cls sigma d = pClasses == qClasses
         qClasses = map (targetClass cls) qTargets
 
 transTarget :: [Trans] -> State -> Symbol -> State
-transTarget [] q s = error "Undefined transition from " ++ q ++ " thru " ++ s ++ "!"
+transTarget [] q s = error ("INTERNAL ERROR: Undefined transition from the state '" ++ q ++ "' using symbol '" ++ s ++ "'!")
 transTarget (Trans from thru to:ds) q s
     | from == q && thru == s = to
     | otherwise = transTarget ds q s

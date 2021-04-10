@@ -5,25 +5,26 @@ module OutputGen (
 import Types
 import Data.List
 
-import MinPrep ( removeNonReachableStates, verifyTotalTransition )
+import MinPrep ( removeNonReachableStates, ensureTotalTransition )
 import EquivClassesSetup ( indistinguishabilityRelation )
 import MinDfsmConstructor ( createDfsmFromEqClasses )
 
 minimizeDFSM :: DFSM -> DFSM
 minimizeDFSM dfsm = createDfsmFromEqClasses cleaned_dfsm eqClasses
     where
-        cleaned_dfsm = verifyTotalTransition $ removeNonReachableStates dfsm
+        cleaned_dfsm = ensureTotalTransition $ removeNonReachableStates dfsm
         eqClasses = indistinguishabilityRelation cleaned_dfsm
 
 printDFSM :: DFSM -> IO ()
 printDFSM (DFSM q s d q0 f) = do
     putStrLn $ printStatesCommaSep q
     putStrLn $ concat s
-    printTransitions d
     putStrLn q0
     putStrLn $ printStatesCommaSep f
+    printTransitions d
 
 printTransitions :: [Trans] -> IO ()
+printTransitions [] = return ()
 printTransitions [t] = printTransition t
 printTransitions (t:ts) = do
     printTransition t

@@ -1,1 +1,36 @@
-# flpproj
+# Minimization of the deterministic finite state machine (FSM)
+#### **dka-2-mka** project in Haskell programming language - FLP course 2020/2021
+
+The program starts the processing with load of the DFSM into the internal representation. The DFSM is either provided in the input file (see program launch) or entered via the standard input.
+
+Consequently, it is either printed out to the output (as-is, only the canonical form is created) or the DFSM is minimized based on the Algorithm 3.5 from the TIN course book as follows:
+
+1. **The non-reachable states are removed** from the set of states as well as from the set of final states (along with the irrelevant transitions from these states, if those are provided in the input)
+2. **Transition function totality is ensured** - for all states, the transitions are defined for all the alphabet symbols. If those were not provided in the input, transitions in format _from-via-"SINK"_ are added. Furthermore, if a "SINK transition" has been added, the "SINK" state itself is added into the set of states and transitions for all the alphabet symbols in format _"SINK"-via-"SINK"_ are added.
+3. **Indistinguishability relation** is set up - equivalence classes are created
+4. ahoj
+
+Launching the program using the Make utility:
+	
+- **make** - program build
+- **make run** - program build & launch with the reference test input (test/test0.in)
+- **make test** - program build & 8 different program launches using the following inputs compared to the reference output using the _diff_ utility:
+-- _test/test0.in_: reference input (provided in the assignment)
+-- _test/test1.in_: DFSM example #2
+-- _test/test2.in_: DFSM example #3
+-- _test/test3.in_: minimalistic DFSM with one state & **no** defined transitions
+-- _test/test4.in_: standard DFSM with **improperly ordered** input states, alphabet and transitions
+-- _test/test5.in_: the same DFSM as in the previous point, this time correctly ordered, compared to the **same** output
+-- _test/test6.in_: DFSM with no input alphabet - error reported
+-- _test/test7.in_: DFSM with **unallowed character in state definition** - error reported
+-- _test/test8.in_: DFSM with **unallowed character in alphabet symbols** - error reported
+
+Standard program launch (make sure the program is built):
+- ***./dka-2-mka (-i|-t) [file_path]***
+-- _-i_: loads the FSM into the internal representation and outputs it directly
+-- _-t_: loads the FSM, performes the minimization procedure and outputs it to the console in the canonical form
+-- _file_path_: optional argument - path to the input file. If not provided, the program reads the input from the stdin 
+
+
+
+

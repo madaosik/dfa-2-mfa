@@ -18,7 +18,7 @@ data LaunchMode = Print | Minimize deriving (Enum, Show, Eq)
 type FPath = String
 
 parseArgs :: [String] -> (LaunchMode, Maybe FPath)
-parseArgs [] = error "-t launch parametr for DFSM minimization or -i parametr for DFSM print is expected!"
+parseArgs [] = error "-t launch parameter for DFSM minimization or -i parametr for DFSM print is expected!"
 parseArgs [mode]
     | mode == "-i" = (Print, Nothing)
     | mode == "-t" = (Minimize, Nothing)
@@ -42,9 +42,12 @@ extractDFSM (q_in:s:[q0]:f:d) = DFSM {
     }
     where
         q_parsed = map checkInputStatesFormat $ splitPerComma q_in
-        s_parsed = splitInAlph s
+        s_parsed = splitInAlph $ checkAlphNonEmptiness s
 
 extractDFSM _ = error "Input file is in an unexpected format!"
+
+checkAlphNonEmptiness :: String -> String
+checkAlphNonEmptiness s = if null s then error "Empty input alphabet is not allowed!" else s
 
 checkInputStatesFormat :: State -> State
 checkInputStatesFormat [q]

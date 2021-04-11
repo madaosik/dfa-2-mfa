@@ -1,20 +1,47 @@
 # Minimization of the deterministic finite state machine (FSM)
 #### **dka-2-mka** project in Haskell programming language - FLP course 2020/2021
+ author: Adam Lanicek
+ login: xlanic04
+ 
+I was already assigned this topic in the previous academic year and considered extending
+the sub-optimal last year's solution during this year's implementation. In the end, however,
+to get better grasp of the Haskell language, I decided to implement it from scratch once again.
 
-The program starts the processing with load of the DFSM into the internal representation. The DFSM is either provided in the input file (see program launch) or entered via the standard input.
+#### Basic description of the proceedings
+The program starts the processing with load of the DFSM into the internal representation. 
+The DFSM is either provided in the input file (see program launch) or entered via the standard input.
 
-Consequently, it is either printed out to the output (as-is, only the canonical form is created) or the DFSM is minimized based on the Algorithm 3.5 from the TIN course book as follows:
+Consequently, it is either printed out to the output (as-is, only the canonical form is created)
+or the DFSM is minimized based on the Algorithm 3.5 from the TIN course book as follows:
 
-1. **The non-reachable states are removed** from the set of states as well as from the set of final states (along with the irrelevant transitions from these states, if those are provided in the input)
-2. **Transition function totality is ensured** - for all states, the transitions are defined for all the alphabet symbols. If those were not provided in the input, transitions in format _from-via-"SINK"_ are added. Furthermore, if a "SINK transition" has been added, the "SINK" state itself is added into the set of states and transitions for all the alphabet symbols in format _"SINK"-via-"SINK"_ are added.
-3. **Indistinguishability relation** is set up - equivalence classes are created
-4. ahoj
+1. **The non-reachable states are removed** from the set of states as well as from the set of final states 
+(along with the irrelevant transitions from these states, if those are provided in the input)
+2. **Transition function totality is ensured** - for all states, the transitions are defined for all the 
+alphabet symbols. If those were not provided in the input, transitions in format _from-via-"SINK"_ are added. 
+Furthermore, if a "SINK transition" has been added, the "SINK" state itself is added into the set of states
+and transitions for all the alphabet symbols in format _"SINK"-via-"SINK"_ are added.
+3. **Indistinguishability relation** is set up / **equivalence classes** are created
+4. **Minimal DFSM is reconstructed** from the equivalence classes in accordance with the Algorithm, 
+its states denoted asi numbers from 0 onwards.
 
+#### Program module structure
+- **Main.hs**: main module implementing the program structure
+- **Types.hs**:  definitions of the types used throughout the program
+- **InputParser.hs**: command line argument parsing
+- **MinPrep.hs**: minimization preparation - non-reachable states removal and total transition function verification
+- **EquivClassesSetup.hs**: indistinguishable relation & equivalence classes setup
+- **MinDfsmConstructor.hs**: assembly of the minimal DFSM from the equivalence classes
+- **OutputGen.hs**: IO operations for printing the program output
+- **test/Spec.hs**: extra (non-essential, not a part of the standard build) testing module used for the development purposes.
+Imports the implementation from other modules and tests their output.
+
+#### Launch
 Launching the program using the Make utility:
 	
 - **make** - program build
 - **make run** - program build & launch with the reference test input (test/test0.in)
-- **make test** - program build & 8 different program launches using the following inputs compared to the reference output using the _diff_ utility:
+- **make test** - program build & 8 different program launches using the following inputs
+compared to the reference output using the _diff_ utility:
 -- _test/test0.in_: reference input (provided in the assignment)
 -- _test/test1.in_: DFSM example #2
 -- _test/test2.in_: DFSM example #3
@@ -31,6 +58,14 @@ Standard program launch (make sure the program is built):
 -- _-t_: loads the FSM, performes the minimization procedure and outputs it to the console in the canonical form
 -- _file_path_: optional argument - path to the input file. If not provided, the program reads the input from the stdin 
 
+#### Error handling
 
+The program strictly requires:
+- The **input alphabet to be non-empty and represented ONLY by the lowercase letters 'a'-'z'**. 
+Should any other character appear in the alphabet definition row, the program terminates.
+- The **states to be denoted by numbers and separated by comma**.
+- The **transitions to be defined in the format _from,via,to_** where _from_ and _to_ 
+**are elements from the set of states** and _via_ is **the symbol from the input alphabet**. 
+Should any transition not meeting this requirement be detected, the program terminates.
 
 

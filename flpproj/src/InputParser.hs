@@ -36,7 +36,7 @@ extractDFSM :: [String] -> DFSM
 extractDFSM (q_in:s:[q0]:f:d) = DFSM {
     q = sort q_parsed,
     sigma = sort s_parsed,
-    d = sort $ checkForDuplTrans $ map (initInTrans "Transition" q_parsed s_parsed . splitPerComma) d,
+    d = sort $ checkForDuplTrans $ map (initInTrans "Transition" q_parsed s_parsed . splitPerComma) $ filter (not . null) d,
     q0 = checkStateMembership "Starting state" q_parsed [q0],
     f = map (checkStateMembership "Final states" q_parsed ) $ sort $ splitPerComma f
     }

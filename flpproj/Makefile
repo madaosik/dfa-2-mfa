@@ -4,8 +4,6 @@ clean:
 	rm src/*.hi src/*.o dka-2-mka
 
 run: all
-	echo ""
-	echo "Launching sample test test0.in"
 	./dka-2-mka -t test/test0.in
 
 pack:

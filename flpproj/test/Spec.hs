@@ -10,6 +10,7 @@ import Data.List
 main :: IO ()
 main = do
     srcData <- readFile "test/test4.in"
+    --srcData <- getContents
     --f <- readFile srcData
     let dfsm = ensureTotalTransition $ removeNonReachableStates $ loadDFSM srcData
     putStrLn ""

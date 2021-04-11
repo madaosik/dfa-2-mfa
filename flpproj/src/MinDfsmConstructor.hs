@@ -1,3 +1,12 @@
+{- 
+author: Adam Lanicek
+login: xlanic04
+year: 2020/2021
+
+Module implementing steps 8-11 of the Algorithm 3.5 presented in the TIN course material.
+It processes the created equivalence classes and creates a new, minimized version of the DFSM. 
+-}
+
 module MinDfsmConstructor (
     createDfsmFromEqClasses
 ) where

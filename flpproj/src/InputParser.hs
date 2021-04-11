@@ -1,3 +1,11 @@
+{- 
+author: Adam Lanicek
+login: xlanic04
+year: 2020/2021
+
+Module implementing the parsing of input file and converting the input into the internal DFSM representation
+-}
+
 module InputParser
     ( parseArgs, loadDFSM, LaunchMode (Print)
     ) where
@@ -26,9 +34,9 @@ loadDFSM inp = extractDFSM $ map (filter (/= '\r')) $ lines inp
 
 extractDFSM :: [String] -> DFSM
 extractDFSM (q_in:s:[q0]:f:d) = DFSM {
-    q = q_parsed,
-    sigma = s_parsed,
-    d = checkForDuplTrans $ map (initInTrans "Transition" q_parsed s_parsed . splitPerComma) d,
+    q = sort q_parsed,
+    sigma = sort s_parsed,
+    d = sort $ checkForDuplTrans $ map (initInTrans "Transition" q_parsed s_parsed . splitPerComma) d,
     q0 = checkStateMembership "Starting state" q_parsed [q0],
     f = map (checkStateMembership "Final states" q_parsed ) $ sort $ splitPerComma f
     }

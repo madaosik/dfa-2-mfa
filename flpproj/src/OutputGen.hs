@@ -1,3 +1,11 @@
+{- 
+author: Adam Lanicek
+login: xlanic04
+year: 2020/2021
+
+Module for generating the program output
+-}
+
 module OutputGen (
     printDFSM, minimizeDFSM, printEquivClasses
 ) where
@@ -21,7 +29,7 @@ printDFSM (DFSM q s d q0 f) = do
     putStrLn $ concat s
     putStrLn q0
     putStrLn $ printStatesCommaSep f
-    printTransitions d
+    printTransitions $ sort d
 
 printTransitions :: [Trans] -> IO ()
 printTransitions [] = return ()

@@ -56,13 +56,13 @@ test_isInSameEqClass (DFSM q sigma d q0 f) = do
                 if isInSameEqClass p q classes sigma d then putStrLn (p ++ " " ++ q ++ " - SAME") else putStrLn (p ++ " " ++ q ++ " - DIFFERENT")
                 sameClassTest xs classes sigma d
 
-    -- let dfsm = DFSM {
-    -- q=["1","2","3","4","5","6"],
-    -- sigma=["a", "b"],
-    -- d=[Trans "1" "a" "6", Trans "1" "b" "2", Trans "2" "a" "5", 
-    --     Trans "2" "b" "4", Trans "3" "a" "3", Trans "3" "b" "6", 
-    --     Trans "4" "a" "4", Trans "4" "b" "1", Trans "5" "a" "2", 
-    --     Trans "5" "b" "3", Trans "6" "a" "1", Trans "6" "b" "5"],
-    -- q0="1",
-    -- f=["1","6"]
-    -- }
+-- let dfsm = DFSM {
+-- q=["1","2","3","4","5","6"],
+-- sigma=["a", "b"],
+-- d=[Trans "1" "a" "6", Trans "1" "b" "2", Trans "2" "a" "5", 
+--     Trans "2" "b" "4", Trans "3" "a" "3", Trans "3" "b" "6", 
+--     Trans "4" "a" "4", Trans "4" "b" "1", Trans "5" "a" "2", 
+--     Trans "5" "b" "3", Trans "6" "a" "1", Trans "6" "b" "5"],
+-- q0="1",
+-- f=["1","6"]
+-- }

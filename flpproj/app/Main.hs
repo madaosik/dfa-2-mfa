@@ -1,3 +1,11 @@
+{- 
+author: Adam Lanicek
+login: xlanic04
+year: 2020/2021
+
+Main module of the dka-2-mka program directing the program flow
+-}
+
 module Main where
 
 import InputParser ( parseArgs, LaunchMode (Print), loadDFSM )

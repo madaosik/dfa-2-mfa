@@ -7,50 +7,50 @@ if [ $RTE -eq 1 ]
 then
     COMMAND="stack run --"
 else
-    COMMAND="../dka-2-mka"
+    COMMAND="./dka-2-mka"
 fi
 
 echo "Running basic minimization test based on test0.in input provided in the assignment..."
-${COMMAND} -t test0.in | diff test0.out -
+${COMMAND} -t test/test0.in | diff test/test0.out -
 [ $? -eq 0 ] && echo "SUCCESS!" || echo "FAIL!"
 echo ""
 
 echo "Running test1.in minimization..."
-${COMMAND} -t test1.in | diff test1.out -
+${COMMAND} -t test/test1.in | diff test/test1.out -
 [ $? -eq 0 ] && echo "SUCCESS!" || echo "FAIL!"
 echo ""
 
 echo "Running test2.in minimization..."
-${COMMAND} -t test2.in | diff test2.out -
+${COMMAND} -t test/test2.in | diff test/test2.out -
 [ $? -eq 0 ] && echo "SUCCESS!" || echo "FAIL!"
 echo ""
 
 echo "Running corner case test3.in minimization with no defined transitions..."
-${COMMAND} -t test3.in | diff test3.out -
+${COMMAND} -t test/test3.in | diff test/test3.out -
 [ $? -eq 0 ] && echo "SUCCESS!" || echo "FAIL!"
 echo ""
 
 echo "Running test4.in minimization with IMPROPERLY ordered input states, alphabet and transitions..."
-${COMMAND} -t test4.in | diff test4.out -
+${COMMAND} -t test/test4.in | diff test/test4.out -
 [ $? -eq 0 ] && echo "SUCCESS!" || echo "FAIL!"
 echo ""
 
 echo "Running test5.in minimization with PROPERLY ordered input states, alphabet and transitions, comparing to the same output..."
-${COMMAND} -t test5.in | diff test4.out -
+${COMMAND} -t test/test5.in | diff test/test4.out -
 [ $? -eq 0 ] && echo "SUCCESS!" || echo "FAIL!"
 echo ""
 
 echo "ERROR EXPECTED - Running test6.in minimization with NO input alphabet..."
-${COMMAND} -t test6.in
+${COMMAND} -t test/test6.in
 [ $? -eq 1 ] && echo "SUCCESS!" || echo "FAIL!"
 echo ""
 
 echo "ERROR EXPECTED - Running test7.in minimization with unallowed character in state definition..."
-${COMMAND} -t test7.in
+${COMMAND} -t test/test7.in
 [ $? -eq 1 ] && echo "SUCCESS!" || echo "FAIL!"
 echo ""
 
 echo "ERROR EXPECTED - Running test8.in minimization with unallowed character in alphabet symbols..."
-${COMMAND} -t test8.in
+${COMMAND} -t test/test8.in
 [ $? -eq 1 ] && echo "SUCCESS!" || echo "FAIL!"
 echo ""

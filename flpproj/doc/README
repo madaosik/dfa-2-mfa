@@ -34,6 +34,7 @@ its states denoted asi numbers from 0 onwards.
 - **OutputGen.hs**: IO operations for printing the program output
 - **test/Spec.hs**: extra (non-essential, not a part of the standard build) testing module used for the development purposes.
 Imports the implementation from other modules and tests their output.
+- **test/test_runner**: bash script launching the program with different inputs to demonstrate its functionality (see _make test_)
 
 #### Launch
 Launching the program using the Make utility:
